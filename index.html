@@ -1,0 +1,2968 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>現實人生計算機｜理想生活現金流</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            min-width: 1320px;
+            overflow-x: auto;
+        }
+        body {
+            font-family: 'Microsoft JhengHei', '微軟正黑體', 'Noto Sans TC', sans-serif;
+            background:
+                radial-gradient(circle at top, rgba(61,120,255,0.10), transparent 30%),
+                linear-gradient(180deg, #f6f9ff 0%, #eef4ff 45%, #f8fbff 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #1f2a44;
+        }
+
+        header {
+            width: min(1320px, calc(100vw - 48px));
+            min-width: 1320px;
+            background: rgba(255,255,255,0.82);
+            padding: 16px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(37, 65, 122, 0.08);
+            backdrop-filter: blur(14px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(120, 148, 214, 0.15);
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 800;
+            color: #183b8c;
+            letter-spacing: 0.2px;
+        }
+
+        .header-tag {
+            font-size: 12px;
+            color: #627197;
+            background: #f2f6ff;
+            border: 1px solid #dbe5ff;
+            padding: 6px 10px;
+            border-radius: 999px;
+        }
+
+        .container {
+            width: min(1320px, calc(100vw - 48px));
+            min-width: 1320px;
+            max-width: none;
+            padding: 22px 18px 60px;
+        }
+
+        /* Progress Bar */
+        .progress-wrap {
+            padding: 12px 0 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(193,210,255,0.55);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #356dff, #5ba4ff);
+            border-radius: 999px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-label {
+            text-align: right;
+            font-size: 11px;
+            color: #7a88ab;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        /* Steps */
+        .step { display: none; }
+        .step.active {
+            display: block;
+            animation: slideIn 0.35s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255,255,255,0.92);
+            border: 1px solid rgba(205,220,255,0.85);
+            border-radius: 28px;
+            padding: 30px 26px;
+            box-shadow: 0 18px 50px rgba(37, 65, 122, 0.10);
+            margin-top: 18px;
+            backdrop-filter: blur(6px);
+        }
+
+        .card-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #17357a;
+            text-align: center;
+            margin-bottom: 14px;
+            letter-spacing: -0.2px;
+        }
+
+        .card-desc {
+            text-align: center;
+            color: #6d7a99;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        /* Welcome */
+        .welcome-icon { font-size: 64px; text-align: center; margin-bottom: 12px; }
+        .welcome-main {
+            font-size: 34px;
+            font-weight: 800;
+            color: #17357a;
+            text-align: center;
+            line-height: 1.24;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        .welcome-sub {
+            font-size: 15px;
+            color: #356dff;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .welcome-desc {
+            font-size: 15px;
+            color: #5e6d92;
+            text-align: center;
+            line-height: 1.9;
+            margin-bottom: 30px;
+        }
+
+        .welcome-points {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 0 0 28px;
+        }
+        .welcome-point {
+            background: #f6f9ff;
+            border: 1px solid #e0e8ff;
+            border-radius: 18px;
+            padding: 12px 10px;
+            font-size: 12px;
+            color: #5f7097;
+            line-height: 1.6;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #2f63ff, #4b8cff);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            padding: 15px 22px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            display: block;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 14px 30px rgba(47,99,255,0.24);
+        }
+        .btn-primary:hover {
+            opacity: 0.97;
+            transform: translateY(-1px);
+            box-shadow: 0 16px 34px rgba(47,99,255,0.28);
+        }
+        .btn-secondary {
+            background: white;
+            color: #5f7097;
+            border: 1px solid #d8e2ff;
+            border-radius: 18px;
+            padding: 12px 20px;
+            font-size: 15px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover { border-color: #aaa; }
+
+        /* Form */
+        .form-group { margin-bottom: 18px; }
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 7px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            background: #fafafa;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #2c7ab8;
+            background: white;
+        }
+        .form-select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #fafafa;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .form-select:focus { outline: none; border-color: #2c7ab8; }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .input-row .form-input { flex: 1; }
+        .unit { font-size: 14px; color: #888; white-space: nowrap; }
+
+        /* Gender toggle */
+        .gender-row { display: flex; gap: 10px; }
+        .gender-btn {
+            flex: 1;
+            padding: 11px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
+            background: #fafafa;
+        }
+        .gender-btn.active {
+            border-color: #2c7ab8;
+            background: #e8f4fd;
+            color: #2c7ab8;
+            font-weight: bold;
+        }
+
+        /* Category Grid */
+        .planning-intro {
+            background: linear-gradient(180deg, #f7faff, #f2f7ff);
+            border: 1px solid #dde7ff;
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+        .planning-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #17357a;
+            margin-bottom: 8px;
+        }
+        .planning-text {
+            color: #617196;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .live-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 18px 0 22px;
+        }
+        .live-box {
+            background: #ffffff;
+            border: 1px solid #dbe4ff;
+            border-radius: 18px;
+            padding: 14px 12px;
+            box-shadow: 0 10px 24px rgba(29,67,145,0.06);
+        }
+        .live-kicker {
+            font-size: 11px;
+            color: #7b89a8;
+            margin-bottom: 6px;
+        }
+        .live-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #17357a;
+            line-height: 1.15;
+        }
+        .live-sub {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #7b89a8;
+        }
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+        .cat-item {
+            background: linear-gradient(180deg, #ffffff, #f7faff);
+            border: 1px solid #dde6ff;
+            border-radius: 22px;
+            padding: 18px 14px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            min-height: 112px;
+        }
+        .cat-item:hover { background: #f3f7ff; border-color: #9bb6ff; transform: translateY(-1px); }
+        .cat-item.filled { border-color: #9fd2b6; background: linear-gradient(180deg, #ffffff, #f4fbf7); }
+        .cat-icon { font-size: 28px; display: block; margin-bottom: 10px; }
+        .cat-name { font-size: 15px; color: #24375f; font-weight: 800; }
+        .cat-copy { font-size: 12px; color: #7a88ab; line-height: 1.6; margin-top: 6px; }
+        .cat-amt { font-size: 12px; color: #1e9c62; font-weight: 800; margin-top: 10px; }
+        .check-badge {
+            position: absolute; top: 5px; right: 5px;
+            background: #27ae60; color: white;
+            border-radius: 50%; width: 17px; height: 17px;
+            font-size: 10px; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 500;
+            align-items: center; justify-content: center;
+            padding: 16px;
+        }
+        .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-box {
+            background: white;
+            border-radius: 28px;
+            padding: 28px 24px;
+            width: 100%; max-width: 460px;
+            box-shadow: 0 28px 70px rgba(22,45,93,0.25);
+            animation: slideUp 0.25s ease;
+            border: 1px solid #e6ecff;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-title {
+            font-size: 20px; font-weight: bold; color: #1a5f99;
+            text-align: center; margin-bottom: 20px;
+        }
+        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .modal-btns .btn-primary { flex: 2; padding: 13px; font-size: 15px; }
+        .modal-btns .btn-secondary { flex: 1; }
+        .hint-text { font-size: 11px; color: #aaa; margin-top: 4px; }
+
+        /* Results */
+        .result-hero {
+            background: linear-gradient(135deg, #17357a, #356dff);
+            color: white;
+            border-radius: 24px;
+            padding: 28px 24px;
+            text-align: center;
+            margin-bottom: 22px;
+            box-shadow: 0 22px 45px rgba(33,78,173,0.26);
+        }
+        .result-note {
+            background: #f7faff;
+            border: 1px solid #dbe4ff;
+            border-radius: 18px;
+            padding: 16px;
+            margin: 0 0 18px;
+            color: #5e6e92;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+        .result-hero-label { font-size: 14px; opacity: 0.85; margin-bottom: 6px; }
+        .result-hero-amount { font-size: 40px; font-weight: bold; letter-spacing: -1px; }
+        .result-hero-unit { font-size: 16px; opacity: 0.85; }
+
+        .compare-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 13px 0; border-bottom: 1px solid #f2f2f2;
+        }
+        .compare-key { font-size: 14px; color: #666; }
+        .compare-val { font-size: 16px; font-weight: bold; }
+        .clr-income { color: #2c7ab8; }
+        .clr-expense { color: #e85d4a; }
+        .clr-good { color: #27ae60; }
+        .clr-bad { color: #e85d4a; }
+
+        .bar-section { margin: 20px 0; }
+        .bar-row { margin-bottom: 10px; }
+        .bar-lbl { font-size: 12px; color: #888; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .bar-track { height: 18px; background: #f0f0f0; border-radius: 9px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 9px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+        .bar-income { background: linear-gradient(90deg, #2c7ab8, #5baae0); }
+        .bar-expense { background: linear-gradient(90deg, #e85d4a, #f5a623); }
+
+        .breakdown-section {
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            border: 1px solid #dfe8ff;
+            border-radius: 24px;
+            padding: 22px;
+            margin-top: 18px;
+            box-shadow: 0 12px 28px rgba(24,59,140,0.06);
+        }
+        .breakdown-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #17357a;
+            margin-bottom: 16px;
+        }
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            padding: 18px 0;
+            border-bottom: 1px solid #eaf0ff;
+            font-size: 13px;
+        }
+        .breakdown-item:last-child { border: none; }
+        .breakdown-name {
+            color: #1f2a44;
+            font-weight: 800;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .breakdown-sub {
+            font-size: 14px;
+            color: #627197;
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+
+        .compare-stage {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            margin-top: 18px;
+        }
+        .compare-panel {
+            border: 1px solid #dfe8ff;
+            border-radius: 24px;
+            padding: 24px;
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            box-shadow: 0 12px 28px rgba(24,59,140,0.06);
+        }
+        .compare-panel.ideal {
+            border-color: #ffd8d8;
+            background: linear-gradient(180deg, #fffefe, #fff7f7);
+        }
+        .compare-panel.adjusted {
+            border-color: #dbe6ff;
+            background: linear-gradient(180deg, #ffffff, #f7faff);
+        }
+        .compare-kicker {
+            font-size: 13px;
+            color: #7b89a8;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .compare-big {
+            font-size: 42px;
+            line-height: 1.05;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #17357a;
+            margin-bottom: 8px;
+        }
+        .compare-big.red { color: #e85d4a; }
+        .compare-big.blue { color: #2f63ff; }
+        .compare-small {
+            font-size: 14px;
+            color: #64739a;
+            line-height: 1.7;
+        }
+        .compare-summary {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .compare-summary-card {
+            border-radius: 22px;
+            padding: 20px;
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            border: 1px solid #dfe8ff;
+            box-shadow: 0 12px 28px rgba(24,59,140,0.06);
+        }
+        .compare-summary-label {
+            font-size: 13px;
+            color: #7b89a8;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .compare-summary-value {
+            font-size: 34px;
+            line-height: 1.1;
+            font-weight: 900;
+            color: #17357a;
+            letter-spacing: -0.5px;
+        }
+        .compare-table {
+            margin-top: 18px;
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            border: 1px solid #dfe8ff;
+            border-radius: 24px;
+            padding: 22px;
+            box-shadow: 0 12px 28px rgba(24,59,140,0.06);
+        }
+        .compare-table-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #17357a;
+            margin-bottom: 16px;
+        }
+        .compare-head,
+        .compare-line {
+            display: grid;
+            grid-template-columns: 220px 1fr 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+        .compare-head {
+            padding: 0 0 12px;
+            border-bottom: 1px solid #e6edff;
+            margin-bottom: 4px;
+        }
+        .compare-head div {
+            font-size: 13px;
+            color: #7b89a8;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        .compare-line {
+            padding: 16px 0;
+            border-bottom: 1px solid #edf2ff;
+        }
+        .compare-line:last-child { border-bottom: none; }
+        .compare-item-name {
+            font-size: 18px;
+            font-weight: 800;
+            color: #1f2a44;
+            padding-top: 8px;
+        }
+        .compare-card {
+            border-radius: 18px;
+            padding: 14px 16px;
+            min-height: 94px;
+        }
+        .compare-card.before {
+            background: #fff4f4;
+            border: 1px solid #ffd9d9;
+        }
+        .compare-card.after {
+            background: #f4f8ff;
+            border: 1px solid #d8e3ff;
+        }
+        .compare-money {
+            font-size: 28px;
+            line-height: 1.1;
+            font-weight: 900;
+            color: #17357a;
+            margin-bottom: 8px;
+        }
+        .compare-detail {
+            font-size: 13px;
+            line-height: 1.8;
+            color: #66779d;
+        }
+        .compare-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+
+        .edit-inline-btn {
+            margin-left: 12px;
+            padding: 5px 12px;
+            border: 1px solid #dbe5ff;
+            background: #f4f7ff;
+            color: #356dff;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            vertical-align: middle;
+            transition: all 0.2s ease;
+        }
+        .edit-inline-btn:hover {
+            background: #356dff;
+            color: #fff;
+            border-color: #356dff;
+        }
+
+        .breakdown-amt {
+            font-weight: 800;
+            color: #17357a;
+            font-size: 22px;
+            white-space: nowrap;
+            align-self: center;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin: 22px 0 16px;
+        }
+        .impact-card {
+            background: linear-gradient(180deg, #ffffff, #f7faff);
+            border: 1px solid #dbe4ff;
+            border-radius: 20px;
+            padding: 18px;
+            box-shadow: 0 10px 22px rgba(24,59,140,0.06);
+        }
+        .impact-label {
+            font-size: 13px;
+            color: #7b89a8;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .impact-value {
+            font-size: 34px;
+            line-height: 1.1;
+            font-weight: 800;
+            color: #17357a;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+        .impact-sub {
+            font-size: 13px;
+            color: #64739a;
+            line-height: 1.6;
+        }
+
+        .share-section {
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            border: 1px solid #dfe8ff;
+            border-radius: 24px;
+            padding: 22px;
+            margin-top: 18px;
+            box-shadow: 0 12px 28px rgba(24,59,140,0.06);
+        }
+        .share-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #17357a;
+            margin-bottom: 16px;
+        }
+        .share-wrap {
+            display: grid;
+            grid-template-columns: 420px minmax(0, 760px);
+            gap: 18px;
+            align-items: center;
+            justify-content: center;
+        }
+        .share-chart-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .share-chart-holder {
+            position: relative;
+            width: 320px;
+            height: 320px;
+        }
+        #shareChart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .share-donut {
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 18px 36px rgba(24,59,140,0.10);
+            background: conic-gradient(#356dff 0deg 120deg, #65b9ff 120deg 170deg, #77c95f 170deg 210deg, #8f7cff 210deg 255deg, #f87979 255deg 290deg, #ffb347 290deg 320deg, #36c2b3 320deg 360deg);
+        }
+        .share-donut::before {
+            content: "";
+            position: absolute;
+            inset: 54px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: inset 0 0 0 1px #e6edff;
+        }
+        .share-center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            text-align: center;
+            padding: 0 54px;
+        }
+        .share-center-label {
+            font-size: 20px;
+            color: #6f7ea4;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        .share-center-total {
+            font-size: 34px;
+            font-weight: 900;
+            color: #17357a;
+            line-height: 1.2;
+        }
+        .share-center-total span {
+            font-size: 18px;
+            color: #6f7ea4;
+            font-weight: 700;
+        }
+        .share-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .share-row {
+            display: grid;
+            grid-template-columns: minmax(220px, 1fr) 170px 150px;
+            gap: 12px;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #edf2ff;
+        }
+        .share-row:last-child { border-bottom: none; }
+        .share-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: #203056;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .share-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            flex: 0 0 14px;
+        }
+        .share-text {
+            overflow: visible;
+            text-overflow: unset;
+            white-space: nowrap;
+            display: block;
+            min-width: 0;
+            font-size: 18px;
+        }
+        .share-money, .share-pct {
+            font-weight: 800;
+            color: #17357a;
+            text-align: right;
+            white-space: nowrap;
+            font-size: 18px;
+        }
+
+        .quiet-box {
+            margin-top: 18px;
+            background: linear-gradient(180deg, #fff9eb, #fff5da);
+            border: 1px solid #f1e2ae;
+            border-radius: 22px;
+            padding: 20px;
+            color: #6e5a15;
+        }
+        .quiet-box-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #705400;
+        }
+        .quiet-box-text {
+            font-size: 14px;
+            line-height: 1.9;
+            color: #6a5c2a;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .result-actions .btn-secondary,
+        .result-actions .restart-btn {
+            width: 100%;
+            margin-top: 0;
+        }
+
+        .cta-box {
+            border-radius: 16px;
+            padding: 22px;
+            text-align: center;
+            margin-top: 18px;
+            color: white;
+        }
+        .cta-box.danger { background: linear-gradient(135deg, #ef5a53, #d93a63); }
+        .cta-box.safe { background: linear-gradient(135deg, #1e9c62, #39c584); }
+        .cta-box-title { font-size: 18px; font-weight: bold; margin-bottom: 8px; }
+        .cta-box-text { font-size: 13px; opacity: 0.92; margin-bottom: 16px; line-height: 1.6; }
+        .cta-btn {
+            background: white;
+            border: none;
+            border-radius: 50px;
+            padding: 11px 28px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .cta-box.danger .cta-btn { color: #e85d4a; }
+        .cta-box.safe .cta-btn { color: #27ae60; }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+        .restart-btn {
+            width: 100%; margin-top: 14px;
+            background: white; color: #888;
+            border: 2px solid #ddd; border-radius: 50px;
+            padding: 12px; font-size: 14px;
+            cursor: pointer; font-family: inherit;
+            transition: all 0.2s;
+        }
+        .restart-btn:hover { border-color: #aaa; }
+
+        footer {
+            text-align: center; color: #8a96b2;
+            font-size: 11px; padding: 22px;
+        }
+
+        @media (max-width: 640px) {
+            .header-tag { display: none; }
+        }
+    </style>
+
+<style id="force-landscape-style">
+html, body {
+    min-width: 1320px !important;
+    overflow-x: auto !important;
+}
+body {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+header,
+.container {
+    width: 1320px !important;
+    min-width: 1320px !important;
+}
+.share-wrap {
+    grid-template-columns: 420px minmax(0, 760px) !important;
+    gap: 18px !important;
+    justify-content: center !important;
+}
+.share-row {
+    grid-template-columns: minmax(220px, 1fr) 170px 150px !important;
+    gap: 12px !important;
+}
+.result-actions {
+    flex-direction: row !important;
+}
+</style>
+
+
+<style id="premium-ui-upgrade">
+:root{
+    --bg-top:#eef4ff;
+    --bg-bottom:#f8fbff;
+    --panel:#ffffff;
+    --panel-soft:#f7faff;
+    --line:#dfe8ff;
+    --line-strong:#cfdcff;
+    --text:#1f2a44;
+    --muted:#7081a7;
+    --primary:#214ecf;
+    --primary-2:#4b8cff;
+    --danger:#e85d4a;
+    --danger-soft:#fff4f1;
+    --success:#22a36a;
+    --success-soft:#eefbf5;
+    --shadow:0 20px 50px rgba(28,63,143,.10);
+    --shadow-soft:0 12px 28px rgba(24,59,140,.06);
+}
+
+body{
+    background:
+      radial-gradient(circle at 50% -10%, rgba(95,148,255,.22), transparent 28%),
+      linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 45%, #fbfdff 100%) !important;
+    color:var(--text);
+}
+
+header{
+    background:rgba(255,255,255,.86) !important;
+    border:1px solid rgba(219,229,255,.8);
+    border-top:none;
+    box-shadow:0 18px 40px rgba(37,65,122,.10) !important;
+}
+
+.logo{
+    font-size:22px !important;
+    letter-spacing:.5px !important;
+}
+
+.header-tag{
+    font-size:13px !important;
+    padding:8px 14px !important;
+    color:#50658f !important;
+    background:linear-gradient(180deg,#f8fbff,#eef4ff) !important;
+}
+
+.card{
+    border-radius:32px !important;
+    padding:34px 32px !important;
+    background:rgba(255,255,255,.95) !important;
+    border:1px solid rgba(214,226,255,.95) !important;
+    box-shadow:var(--shadow) !important;
+}
+
+.card-title{
+    font-size:34px !important;
+    line-height:1.15 !important;
+    letter-spacing:-.6px !important;
+    margin-bottom:12px !important;
+}
+
+.card-desc{
+    font-size:15px !important;
+    line-height:1.8 !important;
+    color:#6b7da4 !important;
+    margin-bottom:28px !important;
+}
+
+.welcome-main{
+    font-size:52px !important;
+    line-height:1.12 !important;
+    margin-bottom:12px !important;
+}
+.welcome-sub{
+    font-size:18px !important;
+    margin-bottom:18px !important;
+}
+.welcome-desc{
+    font-size:17px !important;
+    line-height:2 !important;
+    margin-bottom:28px !important;
+}
+.welcome-point{
+    border-radius:22px !important;
+    padding:16px 14px !important;
+    font-size:14px !important;
+    color:#58709f !important;
+    background:linear-gradient(180deg,#ffffff,#f7faff) !important;
+    border-color:#dfe8ff !important;
+}
+
+.btn-primary{
+    border-radius:20px !important;
+    padding:17px 24px !important;
+    font-size:17px !important;
+    background:linear-gradient(135deg,#214ecf,#4b8cff) !important;
+    box-shadow:0 18px 36px rgba(33,78,207,.25) !important;
+}
+.btn-secondary, .restart-btn{
+    border-radius:20px !important;
+    padding:14px 22px !important;
+    font-size:15px !important;
+    border-color:#d8e2ff !important;
+    color:#57709e !important;
+    background:#fff !important;
+}
+
+.form-label{
+    font-size:13px !important;
+    color:#617197 !important;
+    margin-bottom:8px !important;
+}
+.form-input, .form-select{
+    background:linear-gradient(180deg,#ffffff,#f9fbff) !important;
+    border:1.8px solid #dfe8ff !important;
+    border-radius:16px !important;
+    padding:14px 16px !important;
+    font-size:16px !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+}
+.form-input:focus, .form-select:focus{
+    border-color:#7da9ff !important;
+    box-shadow:0 0 0 4px rgba(76,140,255,.12) !important;
+}
+
+.gender-btn{
+    border-radius:16px !important;
+    padding:13px !important;
+    border-color:#dfe8ff !important;
+    color:#58709f !important;
+}
+.gender-btn.active{
+    background:linear-gradient(180deg,#eef5ff,#e5f0ff) !important;
+    border-color:#7fa8ff !important;
+    color:#214ecf !important;
+}
+
+.planning-intro{
+    border-radius:22px !important;
+    padding:20px !important;
+    background:linear-gradient(180deg,#fbfdff,#f2f7ff) !important;
+}
+.planning-title{
+    font-size:20px !important;
+}
+.planning-text{
+    font-size:15px !important;
+    line-height:1.85 !important;
+}
+
+.live-box{
+    border-radius:22px !important;
+    padding:18px 16px !important;
+    background:linear-gradient(180deg,#ffffff,#f8fbff) !important;
+    box-shadow:var(--shadow-soft) !important;
+}
+.live-kicker{
+    font-size:12px !important;
+}
+.live-value{
+    font-size:30px !important;
+}
+.live-sub{
+    font-size:13px !important;
+}
+
+.cat-grid{
+    gap:16px !important;
+}
+.cat-item{
+    min-height:138px !important;
+    border-radius:26px !important;
+    padding:20px 18px !important;
+    background:linear-gradient(180deg,#ffffff,#f8fbff) !important;
+    box-shadow:var(--shadow-soft);
+}
+.cat-item:hover{
+    transform:translateY(-2px) !important;
+    box-shadow:0 16px 34px rgba(33,78,207,.10) !important;
+}
+.cat-item.filled{
+    background:linear-gradient(180deg,#ffffff,#f3fbf7) !important;
+    border-color:#a9dcc0 !important;
+}
+.cat-icon{
+    font-size:32px !important;
+    margin-bottom:12px !important;
+}
+.cat-name{
+    font-size:18px !important;
+}
+.cat-copy{
+    font-size:13px !important;
+    line-height:1.75 !important;
+}
+.cat-amt{
+    font-size:14px !important;
+    margin-top:12px !important;
+}
+
+.result-hero{
+    border-radius:28px !important;
+    padding:32px 30px !important;
+    background:linear-gradient(135deg,#17357a,#285ee6 65%, #4b8cff) !important;
+}
+.result-hero-label{
+    font-size:15px !important;
+}
+.result-hero-amount{
+    font-size:62px !important;
+    line-height:1 !important;
+}
+.result-hero-unit{
+    font-size:18px !important;
+}
+
+.compare-row{
+    padding:16px 2px !important;
+}
+.compare-key{
+    font-size:15px !important;
+}
+.compare-val{
+    font-size:20px !important;
+}
+
+.impact-card{
+    border-radius:24px !important;
+    padding:22px !important;
+}
+.impact-label{
+    font-size:13px !important;
+}
+.impact-value{
+    font-size:42px !important;
+}
+.impact-sub{
+    font-size:14px !important;
+}
+
+.share-section, .breakdown-section, .compare-table{
+    border-radius:28px !important;
+    padding:24px !important;
+    background:linear-gradient(180deg,#ffffff,#f8fbff) !important;
+    box-shadow:var(--shadow-soft) !important;
+}
+.share-title, .breakdown-title, .compare-table-title{
+    font-size:28px !important;
+    margin-bottom:18px !important;
+}
+.share-chart-holder{
+    width:360px !important;
+    height:360px !important;
+}
+.share-center-label{
+    font-size:22px !important;
+}
+.share-center-total{
+    font-size:42px !important;
+}
+.share-center-total span{
+    font-size:20px !important;
+}
+.share-row{
+    padding:16px 0 !important;
+}
+.share-text{
+    font-size:19px !important;
+    font-weight:800 !important;
+}
+.share-money, .share-pct{
+    font-size:19px !important;
+}
+
+.breakdown-item{
+    padding:20px 0 !important;
+    gap:22px !important;
+}
+.breakdown-name{
+    font-size:20px !important;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.breakdown-sub{
+    font-size:14px !important;
+    line-height:1.85 !important;
+}
+.breakdown-amt{
+    font-size:30px !important;
+    letter-spacing:-.2px;
+}
+
+.edit-inline-btn{
+    padding:6px 12px !important;
+    font-size:12px !important;
+    border-radius:999px !important;
+    background:linear-gradient(180deg,#f7faff,#eef4ff) !important;
+    border-color:#d7e3ff !important;
+}
+.edit-inline-btn:hover{
+    background:#214ecf !important;
+}
+
+.quiet-box{
+    border-radius:24px !important;
+    padding:22px !important;
+}
+.quiet-box-title{
+    font-size:22px !important;
+}
+.quiet-box-text{
+    font-size:15px !important;
+    line-height:1.9 !important;
+}
+
+.compare-panel{
+    border-radius:28px !important;
+    padding:26px !important;
+}
+.compare-kicker{
+    font-size:13px !important;
+}
+.compare-big{
+    font-size:52px !important;
+}
+.compare-small{
+    font-size:15px !important;
+}
+.compare-summary-card{
+    border-radius:24px !important;
+    padding:22px !important;
+}
+.compare-summary-value{
+    font-size:38px !important;
+}
+.compare-head div{
+    font-size:13px !important;
+}
+.compare-item-name{
+    font-size:19px !important;
+}
+.compare-card{
+    border-radius:20px !important;
+    padding:16px !important;
+    min-height:104px !important;
+}
+.compare-money{
+    font-size:32px !important;
+}
+.compare-detail{
+    font-size:13px !important;
+    line-height:1.85 !important;
+}
+
+.modal-box{
+    border-radius:30px !important;
+    padding:30px 26px !important;
+    border:1px solid #dfe8ff !important;
+    box-shadow:0 28px 70px rgba(22,45,93,.22) !important;
+}
+.modal-title{
+    font-size:24px !important;
+    margin-bottom:22px !important;
+}
+.hint-text{
+    font-size:12px !important;
+    color:#8291b3 !important;
+}
+
+.progress-bar{
+    height:10px !important;
+}
+.progress-label{
+    font-size:12px !important;
+}
+
+#rotateOverlay .box{
+    border-radius:28px !important;
+    padding:34px 28px !important;
+}
+#rotateOverlay .title{
+    font-size:34px !important;
+}
+#rotateOverlay .desc{
+    font-size:17px !important;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+    <div class="logo">現實人生計算機</div>
+    <div class="header-tag">先談理想生活，再談收入差距</div>
+</header>
+
+<div class="container">
+    <div class="progress-wrap">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div class="progress-label" id="progressLabel"></div>
+    </div>
+
+    <!-- ===== STEP 0: WELCOME ===== -->
+    <div class="step active" id="step0">
+        <div class="card" style="text-align:center;">
+            <div class="welcome-icon">🧭</div>
+            <div class="welcome-main">先想清楚你想過的生活<br>再來看現在差多少</div>
+            <div class="welcome-sub">這不是填表，是把未來攤開來談</div>
+            
+<div class="welcome-desc">
+                先不討論你現在的工作、收入、環境。<br>
+                只討論一件事：<strong>你真正想過怎樣的生活。</strong>
+            </div>
+
+            <div class="vision-rail">
+                <div class="vision-card">
+                    <div class="vision-title">先想清楚順序</div>
+                    <div class="vision-line">
+                        <div class="vision-pill">工作</div>
+                        <div class="vision-pill">賺錢</div>
+                        <div class="vision-pill active">生活</div>
+                    </div>
+                    <div class="vision-line">
+                        <div class="vision-pill active">先想生活</div>
+                        <div class="vision-pill">再算收入</div>
+                        <div class="vision-pill">最後看差距</div>
+                    </div>
+                </div>
+                <div class="vision-card">
+                    <div class="vision-title">這份工具在做的事</div>
+                    <div class="vision-quote">不是算你現在有多少，<br>而是讓你看到：<strong>你想要的未來，到底值多少。</strong></div>
+                </div>
+            </div>
+
+            <div class="welcome-points">
+
+                <div class="welcome-point">先談生活樣子<br>不是先談商品</div>
+                <div class="welcome-point">把支出變成月現金流<br>比較有感</div>
+                <div class="welcome-point">最後直接看到<br>每月與每年的缺口</div>
+            </div>
+            <button class="btn-primary" onclick="goStep(1)">開始描繪我的理想生活 →</button>
+        </div>
+    </div>
+
+    <!-- ===== STEP 1: BASIC INFO ===== -->
+    <div class="step" id="step1">
+        <div class="card">
+            <div class="card-title">先抓出你的現在</div>
+            <div class="card-desc">先記下你目前的狀態，後面才能對照出你理想生活的差距。</div>
+
+            <div class="form-group">
+                <label class="form-label">你的暱稱 *</label>
+                <input type="text" class="form-input" id="f-nickname" placeholder="請輸入暱稱">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">目前年齡 *</label>
+                <div class="input-row">
+                    <input type="number" class="form-input" id="f-age" placeholder="例：30" min="18" max="65">
+                    <span class="unit">歲</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">性別 *</label>
+                <div class="gender-row">
+                    <div class="gender-btn active" id="gb-M" onclick="setGender('M')">👨 男性</div>
+                    <div class="gender-btn" id="gb-F" onclick="setGender('F')">👩 女性</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">預計退休年齡 *</label>
+                <div class="input-row">
+                    <input type="number" class="form-input" id="f-retire" placeholder="例：60" min="40" max="80" value="60">
+                    <span class="unit">歲</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">目前每月收入（稅前）*</label>
+                <div class="input-row">
+                    <input type="number" class="form-input" id="f-income" placeholder="例：5" step="0.5" min="0">
+                    <span class="unit">萬元 / 月</span>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="step1Next()">下一步 →</button>
+        </div>
+    </div>
+
+    <!-- ===== STEP 2: EXPENSE CATEGORIES ===== -->
+    <div class="step" id="step2">
+        <div class="card">
+            <div class="card-title">拼出你的生活版本</div>
+            <div class="card-desc">不用一次想完，先從你有感的項目開始。每填一格，系統都會往「理想生活月收入」更靠近一步。</div>
+            <div class="planning-intro">
+                <div class="planning-title">這一步，不是在填支出</div>
+                <div class="planning-text">而是在回答一個比較誠實的問題：<strong>你未來到底想住哪裡、怎麼移動、要不要養小孩、退休想怎麼過？</strong></div>
+            </div>
+            <div class="live-summary">
+                <div class="live-box">
+                    <div class="live-kicker">你現在的月收入</div>
+                    <div class="live-value" id="liveIncome">0 元</div>
+                    <div class="live-sub">先記住這個數字</div>
+                </div>
+                <div class="live-box">
+                    <div class="live-kicker">已完成項目</div>
+                    <div class="live-value" id="liveNeed">0 / 10</div>
+                    <div class="live-sub" id="liveGapText">差距會在最後一次揭曉</div>
+                </div>
+            </div>
+
+            <div class="cat-grid">
+                <div class="cat-item" id="ci-house" onclick="openModal('house')">
+                    <span class="cat-icon">🏠</span>
+                    <div class="cat-name">房子</div>
+                    <div class="cat-copy">你想住的方式，會決定你每個月壓力。</div>
+                    <div class="cat-amt" id="ca-house"></div>
+                </div>
+                <div class="cat-item" id="ci-car" onclick="openModal('car')">
+                    <span class="cat-icon">🚗</span>
+                    <div class="cat-name">車子</div>
+                    <div class="cat-copy">不是買價，是每月固定燒掉多少。</div>
+                    <div class="cat-amt" id="ca-car"></div>
+                </div>
+                <div class="cat-item" id="ci-wedding" onclick="openModal('wedding')">
+                    <span class="cat-icon">🏡</span>
+                    <div class="cat-name">家庭開銷</div>
+                    <div class="cat-copy">水電、網路、家庭用品、伙食，最容易被低估。</div>
+                    <div class="cat-amt" id="ca-wedding"></div>
+                </div>
+                <div class="cat-item" id="ci-children" onclick="openModal('children')">
+                    <span class="cat-icon">👶</span>
+                    <div class="cat-name">子女</div>
+                    <div class="cat-copy">這不是花錢而已，是長期責任。</div>
+                    <div class="cat-amt" id="ca-children"></div>
+                </div>
+                <div class="cat-item" id="ci-parents" onclick="openModal('parents')">
+                    <span class="cat-icon">👴</span>
+                    <div class="cat-name">孝養</div>
+                    <div class="cat-copy">先把愛變成可承擔的現金流。</div>
+                    <div class="cat-amt" id="ca-parents"></div>
+                </div>
+                <div class="cat-item" id="ci-retirement" onclick="openModal('retirement')">
+                    <span class="cat-icon">🏖️</span>
+                    <div class="cat-name">退休</div>
+                    <div class="cat-copy">退休不是一筆錢，是退休後每月怎麼活。</div>
+                    <div class="cat-amt" id="ca-retirement"></div>
+                </div>
+                <div class="cat-item" id="ci-medical" onclick="openModal('medical')">
+                    <span class="cat-icon">🏥</span>
+                    <div class="cat-name">醫療</div>
+                    <div class="cat-copy">先把保障折成每月，才看得到壓力。</div>
+                    <div class="cat-amt" id="ca-medical"></div>
+                </div>
+                <div class="cat-item" id="ci-emergency" onclick="openModal('emergency')">
+                    <span class="cat-icon">✈️</span>
+                    <div class="cat-name">旅遊</div>
+                    <div class="cat-copy">想去的地方，最後都會回到現金流。</div>
+                    <div class="cat-amt" id="ca-emergency"></div>
+                </div>
+                <div class="cat-item" id="ci-living" onclick="openModal('living')">
+                    <span class="cat-icon">💰</span>
+                    <div class="cat-name">每月生活費</div>
+                    <div class="cat-copy">你的日常，其實就是人生底盤。</div>
+                    <div class="cat-amt" id="ca-living"></div>
+                </div>
+                <div class="cat-item" id="ci-other" onclick="openModal('other')">
+                    <span class="cat-icon">🎁</span>
+                    <div class="cat-name">其他</div>
+                    <div class="cat-copy">先留彈性，雜項通常比想像更常出現。</div>
+                    <div class="cat-amt" id="ca-other"></div>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:10px;">
+                <button class="btn-secondary" onclick="goStep(1)">← 上一步</button>
+                <button class="btn-primary" style="flex:1;" onclick="calcResults()">計算結果 →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== STEP 3: RESULTS ===== -->
+    <div class="step" id="step3">
+        <div class="card">
+            <div class="card-title" id="r-greeting"></div>
+            <div class="card-desc">你不是沒有想法，只是還沒把理想生活變成具體數字。</div>
+
+            <div class="result-note" id="r-note"></div>
+
+            <div class="result-hero">
+                <div class="result-hero-label">你想要的生活，每月需要</div>
+                <div class="result-hero-amount" id="r-total"></div>
+                <div class="result-hero-unit">元 / 月</div>
+            </div>
+
+            <div class="compare-row">
+                <span class="compare-key">💼 你現在的月收入</span>
+                <span class="compare-val clr-income" id="r-income"></span>
+            </div>
+            <div class="compare-row">
+                <span class="compare-key">🏠 你想生活的月收入</span>
+                <span class="compare-val clr-expense" id="r-expense"></span>
+            </div>
+            <div class="compare-row" style="border:none;">
+                <span class="compare-key">💡 每月差距</span>
+                <span class="compare-val" id="r-gap"></span>
+            </div>
+
+            <div class="bar-section">
+                <div class="bar-row">
+                    <div class="bar-lbl"><span>💼 目前月收入</span><span id="r-income-pct"></span></div>
+                    <div class="bar-track"><div class="bar-fill bar-income" id="bar-i" style="width:0%"></div></div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-lbl"><span>🏠 理想生活現在需要</span><span id="r-expense-pct"></span></div>
+                    <div class="bar-track"><div class="bar-fill bar-expense" id="bar-e" style="width:0%"></div></div>
+                </div>
+            </div>
+
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <div class="impact-label">每月差距</div>
+                    <div class="impact-value" id="r-gap-card">0 元</div>
+                    <div class="impact-sub">現在就要面對</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-label">一年差距</div>
+                    <div class="impact-value" id="r-gap-year">0 元</div>
+                    <div class="impact-sub">不是小洞，是節奏</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-label">退休前要存</div>
+                    <div class="impact-value" id="r-ret-total">0 元</div>
+                    <div class="impact-sub" id="r-ret-sub">退休目標</div>
+                </div>
+            </div>
+
+            <div class="share-section">
+                <div class="share-title">理想生活每月支出結構</div>
+                <div class="share-wrap">
+                    <div class="share-chart-box">
+                        <div class="share-chart-holder">
+                            <canvas id="shareChart"></canvas>
+                            <div class="share-center">
+                                <div class="share-center-label">每月總支出</div>
+                                <div class="share-center-total" id="r-share-total">0 <span>元</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="share-list" id="r-share"></div>
+                </div>
+            </div>
+
+            <div class="breakdown-section">
+                <div class="breakdown-title">你的生活版本明細</div>
+                <div id="r-breakdown"></div>
+            </div>
+
+            <div class="quiet-box" id="r-quiet"></div>
+
+            <div class="cta-box" id="r-cta"></div>
+
+            <div class="result-actions">
+                <button class="btn-secondary" onclick="goStep(2)">← 上一步</button>
+                <button class="btn-primary" onclick="goCompareStep()">下一步：理想版 / 調整版 →</button>
+                <button class="restart-btn" onclick="restart()">🔄 重新計算</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ===== STEP 4: COMPARE ===== -->
+    <div class="step" id="step4">
+        <div class="card">
+            <div class="card-title">理想版 / 調整版</div>
+            <div class="card-desc">你已經把生活版本往下修過一次了。</div>
+
+            <div class="compare-stage">
+                <div class="compare-panel ideal">
+                    <div class="compare-kicker">理想版</div>
+                    <div class="compare-big red" id="cmp-ideal-total">0 元</div>
+                    <div class="compare-small" id="cmp-ideal-gap">距離現在收入 0 元</div>
+                </div>
+                <div class="compare-panel adjusted">
+                    <div class="compare-kicker">調整版</div>
+                    <div class="compare-big blue" id="cmp-adjust-total">0 元</div>
+                    <div class="compare-small" id="cmp-adjust-gap">距離現在收入 0 元</div>
+                </div>
+            </div>
+
+            <div class="compare-summary">
+                <div class="compare-summary-card">
+                    <div class="compare-summary-label">你每月少掉</div>
+                    <div class="compare-summary-value" id="cmp-delta">0 元</div>
+                </div>
+                <div class="compare-summary-card">
+                    <div class="compare-summary-label">理想版距離現在收入</div>
+                    <div class="compare-summary-value" id="cmp-gap-ideal">0 元</div>
+                </div>
+                <div class="compare-summary-card">
+                    <div class="compare-summary-label">調整版距離現在收入</div>
+                    <div class="compare-summary-value" id="cmp-gap-adjust">0 元</div>
+                </div>
+            </div>
+
+            <div class="compare-table">
+                <div class="compare-table-title">你做了這些調整</div>
+                <div class="compare-head">
+                    <div>項目</div>
+                    <div>理想</div>
+                    <div>調整</div>
+                </div>
+                <div id="cmp-list"></div>
+            </div>
+
+            <div class="compare-actions">
+                <button class="btn-secondary" onclick="goStep(3)">← 回到調整頁</button>
+                <button class="btn-primary" onclick="alert('下一步：怎麼彌補差距（尚未製作）')">下一步：怎麼彌補差距 →</button>
+            </div>
+        </div>
+    </div>
+
+<!-- ======== MODALS ======== -->
+
+<!-- 購屋 -->
+<div class="modal-overlay" id="m-house">
+    <div class="modal-box">
+        <div class="modal-title">🏠 房子</div>
+
+        <div class="form-group">
+            <label class="form-label">擁有方式</label>
+            <select class="form-select" id="mh-ownership" onchange="onHouseOptionChange()">
+                <option value="">請選擇</option>
+                <option value="buy">購屋</option>
+                <option value="rent">租屋</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">住宅類型</label>
+            <select class="form-select" id="mh-type" onchange="onHouseOptionChange()">
+                <option value="">請選擇</option>
+                <option value="apartment_elevator">電梯大樓</option>
+                <option value="townhouse_suburb">郊區透天</option>
+                <option value="apartment_walkup">公寓住家</option>
+                <option value="studio_personal">個人套房</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="mh-recommend-wrap" style="display:none;">
+            <label class="form-label">推薦金額</label>
+            <select class="form-select" id="mh-budget" onchange="onHouseBudgetChange()">
+                <option value="">請先選擇</option>
+            </select>
+            <div class="hint-text" id="mh-budget-hint">購屋固定頭款 2 成、貸款 8 成、30 年房貸估算；租屋則直接算月租。</div>
+        </div>
+
+        <div class="form-group" id="mh-custom-wrap" style="display:none;">
+            <label class="form-label">自訂金額</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mh-custom" placeholder="請輸入">
+                <span class="unit" id="mh-custom-unit">萬元</span>
+            </div>
+            <div class="hint-text" id="mh-custom-hint">購屋請輸入房屋總價；租屋請輸入每月租金。</div>
+        </div>
+
+        <div class="modal-btns">
+            <button class="btn-secondary" onclick="closeModal('house')">取消</button>
+            <button class="btn-primary" onclick="saveModal('house')">確認</button>
+        </div>
+    </div>
+</div>
+
+<!-- 買車 -->
+<div class="modal-overlay" id="m-car">
+    <div class="modal-box">
+        <div class="modal-title">🚗 車子</div>
+        <div class="form-group">
+            <label class="form-label">車子類型（車貸）</label>
+            <select class="form-select" id="mc-type" onchange="onCarType()">
+                <option value="">請選擇</option>
+                <option value="250">進口高階（250萬）</option>
+                <option value="150">進口標準（150萬）</option>
+                <option value="90">國產 / 入門（90萬）</option>
+                <option value="custom">自訂車價</option>
+                <option value="0">目前不買車</option>
+            </select>
+        </div>
+        <div class="form-group" id="mc-custom-wrap" style="display:none;">
+            <label class="form-label">自訂車價</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mc-custom" placeholder="請輸入">
+                <span class="unit">萬元</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">每月油錢 / 充電費</label>
+            <select class="form-select" id="mc-fuel" onchange="onFuelChange()">
+                <option value="0">幾乎不用</option>
+                <option value="0.2">約 2,000 元</option>
+                <option value="0.3" selected>約 3,000 元</option>
+                <option value="0.5">約 5,000 元</option>
+                <option value="0.8">約 8,000 元</option>
+                <option value="custom">自訂金額</option>
+            </select>
+        </div>
+        <div class="form-group" id="mc-fuel-custom-wrap" style="display:none;">
+            <label class="form-label">自訂每月油錢 / 充電費</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mc-fuel-custom" placeholder="請輸入" step="0.1" min="0">
+                <span class="unit">元 / 月</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">每月停車位</label>
+            <select class="form-select" id="mc-parking" onchange="onParkingChange()">
+                <option value="0">不用</option>
+                <option value="0.3">約 3,000 元</option>
+                <option value="0.5" selected>約 5,000 元</option>
+                <option value="0.8">約 8,000 元</option>
+                <option value="1.2">約 12,000 元</option>
+                <option value="custom">自訂金額</option>
+            </select>
+        </div>
+        <div class="form-group" id="mc-parking-custom-wrap" style="display:none;">
+            <label class="form-label">自訂每月停車位</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mc-parking-custom" placeholder="請輸入" step="0.1" min="0">
+                <span class="unit">元 / 月</span>
+            </div>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-secondary" onclick="closeModal('car')">取消</button>
+            <button class="btn-primary" onclick="saveModal('car')">確認</button>
+        </div>
+    </div>
+</div>
+
+<!-- 家庭基本開銷 -->
+<div class="modal-overlay" id="m-wedding">
+    <div class="modal-box">
+        <div class="modal-title">🏡 家庭開銷</div>
+        <div class="form-group">
+            <label class="form-label">水電瓦斯</label>
+            <select class="form-select" id="mw-utility" onchange="onWeddingSelectChange('mw-utility','mw-utility-custom-wrap')">
+                <option value="0.2">基本（2,000 元 / 月）</option>
+                <option value="0.3" selected>一般（3,000 元 / 月）</option>
+                <option value="0.5">偏高（5,000 元 / 月）</option>
+                <option value="custom">自訂金額</option>
+            </select>
+        </div>
+        <div class="form-group" id="mw-utility-custom-wrap" style="display:none;">
+            <label class="form-label">自訂水電瓦斯</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mw-utility-custom" placeholder="請輸入" step="0.1" min="0">
+                <span class="unit">元 / 月</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">網路 / 第四台 / 手機共享網路</label>
+            <select class="form-select" id="mw-network" onchange="onWeddingSelectChange('mw-network','mw-network-custom-wrap')">
+                <option value="0.1">基本（1,000 元 / 月）</option>
+                <option value="0.15" selected>一般（1,500 元 / 月）</option>
+                <option value="0.2">較高（2,000 元 / 月）</option>
+                <option value="custom">自訂金額</option>
+            </select>
+        </div>
+        <div class="form-group" id="mw-network-custom-wrap" style="display:none;">
+            <label class="form-label">自訂網路 / 第四台</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mw-network-custom" placeholder="請輸入" step="0.1" min="0">
+                <span class="unit">元 / 月</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">家庭用品 / 清潔 / 消耗品</label>
+            <select class="form-select" id="mw-home" onchange="onWeddingSelectChange('mw-home','mw-home-custom-wrap')">
+                <option value="0.3">基本（3,000 元 / 月）</option>
+                <option value="0.5" selected>一般（5,000 元 / 月）</option>
+                <option value="0.8">較高（8,000 元 / 月）</option>
+                <option value="custom">自訂金額</option>
+            </select>
+        </div>
+        <div class="form-group" id="mw-home-custom-wrap" style="display:none;">
+            <label class="form-label">自訂家庭用品</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mw-home-custom" placeholder="請輸入" step="0.1" min="0">
+                <span class="unit">元 / 月</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">家人伙食 / 外食</label>
+            <select class="form-select" id="mw-food" onchange="onWeddingSelectChange('mw-food','mw-food-custom-wrap')">
+                <option value="0.8">基本（8,000 元 / 月）</option>
+                <option value="1.2" selected>一般（1.2 萬 / 月）</option>
+                <option value="2">較高（2 萬 / 月）</option>
+                <option value="custom">自訂金額</option>
+            </select>
+        </div>
+        <div class="form-group" id="mw-food-custom-wrap" style="display:none;">
+            <label class="form-label">自訂家人伙食 / 外食</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mw-food-custom" placeholder="請輸入" step="0.1" min="0">
+                <span class="unit">元 / 月</span>
+            </div>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-secondary" onclick="closeModal('wedding')">取消</button>
+            <button class="btn-primary" onclick="saveModal('wedding')">確認</button>
+        </div>
+    </div>
+</div>
+
+<!-- 子女 -->
+<div class="modal-overlay" id="m-children">
+    <div class="modal-box">
+        <div class="modal-title">👶 子女計畫</div>
+        <div class="form-group">
+            <label class="form-label">預計生幾個孩子</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mk-count" placeholder="0" min="0" max="10" value="0">
+                <span class="unit">位</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">每位孩子每月開銷</label>
+            <select class="form-select" id="mk-type" onchange="onChildrenType()">
+                <option value="4">菁英版（4萬 / 月）</option>
+                <option value="3" selected>加強版（3萬 / 月）</option>
+                <option value="2">基本版（2萬 / 月）</option>
+                <option value="custom">自訂金額</option>
+            </select>
+        </div>
+        <div class="form-group" id="mk-custom-wrap" style="display:none;">
+            <label class="form-label">每位每月自訂金額</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mk-custom" placeholder="請輸入">
+                <span class="unit">元 / 月</span>
+            </div>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-secondary" onclick="closeModal('children')">取消</button>
+            <button class="btn-primary" onclick="saveModal('children')">確認</button>
+        </div>
+    </div>
+</div>
+
+<!-- 孝養 -->
+<div class="modal-overlay" id="m-parents">
+    <div class="modal-box">
+        <div class="modal-title">👴 孝養父母</div>
+        <div class="form-group">
+            <label class="form-label">每月孝親費</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mp-monthly" placeholder="例：2" step="0.5" min="0">
+                <span class="unit">萬元</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">是否另外有照護支出</label>
+            <select class="form-select" id="mp-care">
+                <option value="0" selected>沒有</option>
+                <option value="1">輕度照護（1萬 / 月）</option>
+                <option value="2">中度照護（2萬 / 月）</option>
+                <option value="3">高度照護（3萬 / 月）</option>
+            </select>
+            <div class="hint-text">先把最常見的現金流壓力算進來，比一次估一大包更準。</div>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-secondary" onclick="closeModal('parents')">取消</button>
+            <button class="btn-primary" onclick="saveModal('parents')">確認</button>
+        </div>
+    </div>
+</div>
+
+<!-- 退休 -->
+<div class="modal-overlay" id="m-retirement">
+    <div class="modal-box">
+        <div class="modal-title">🏖️ 退休生活</div>
+        <div class="form-group">
+            <label class="form-label">退休後每月生活費</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mr-monthly" placeholder="例：5" step="0.5" min="0">
+                <span class="unit">萬元</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">退休後房貸 / 房租</label>
+            <select class="form-select" id="mr-housing-mode" onchange="onRetirementHousingChange()">
+                <option value="stop">退休時不用再繳</option>
+                <option value="link" selected>沿用目前房貸 / 房租</option>
+                <option value="custom">自訂金額</option>
+            </select>
+            <div class="hint-text" id="mr-housing-link-hint">若前面有填房子，會直接沿用目前的房貸 / 房租月支出。</div>
+        </div>
+        <div class="form-group" id="mr-housing-custom-wrap" style="display:none;">
+            <label class="form-label">自訂退休後房貸 / 房租</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mr-housing-custom" placeholder="請輸入" step="0.1" min="0">
+                <span class="unit">元 / 月</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">每月娛樂費</label>
+            <select class="form-select" id="mr-fun" onchange="onRetirementSelectChange('mr-fun','mr-fun-custom-wrap')">
+                <option value="0.5">基本（5,000 元 / 月）</option>
+                <option value="1" selected>一般（1 萬 / 月）</option>
+                <option value="2">寬鬆（2 萬 / 月）</option>
+                <option value="custom">自訂金額</option>
+            </select>
+        </div>
+        <div class="form-group" id="mr-fun-custom-wrap" style="display:none;">
+            <label class="form-label">自訂每月娛樂費</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mr-fun-custom" placeholder="請輸入" step="0.1" min="0">
+                <span class="unit">元 / 月</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">平均每月旅行費</label>
+            <select class="form-select" id="mr-travel" onchange="onRetirementSelectChange('mr-travel','mr-travel-custom-wrap')">
+                <option value="0">不安排</option>
+                <option value="0.5" selected>一般（5,000 元 / 月）</option>
+                <option value="1">舒服（1 萬 / 月）</option>
+                <option value="2">寬鬆（2 萬 / 月）</option>
+                <option value="custom">自訂金額</option>
+            </select>
+        </div>
+        <div class="form-group" id="mr-travel-custom-wrap" style="display:none;">
+            <label class="form-label">自訂平均每月旅行費</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mr-travel-custom" placeholder="請輸入" step="0.1" min="0">
+                <span class="unit">元 / 月</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">退休醫療 / 照護預備</label>
+            <select class="form-select" id="mr-care" onchange="onRetirementSelectChange('mr-care','mr-care-custom-wrap')">
+                <option value="0.3">基本（3,000 元 / 月）</option>
+                <option value="0.8" selected>一般（8,000 元 / 月）</option>
+                <option value="1.5">提高（1.5 萬 / 月）</option>
+                <option value="custom">自訂金額</option>
+            </select>
+        </div>
+        <div class="form-group" id="mr-care-custom-wrap" style="display:none;">
+            <label class="form-label">自訂退休醫療 / 照護預備</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mr-care-custom" placeholder="請輸入" step="0.1" min="0">
+                <span class="unit">元 / 月</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">預估退休年數</label>
+            <input type="text" class="form-input" id="mr-years-display" readonly style="background:#f5f5f5;color:#888;">
+            <div class="hint-text">依您填寫的退休年齡至85歲計算</div>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-secondary" onclick="closeModal('retirement')">取消</button>
+            <button class="btn-primary" onclick="saveModal('retirement')">確認</button>
+        </div>
+    </div>
+</div>
+
+<!-- 醫療 -->
+<div class="modal-overlay" id="m-medical">
+    <div class="modal-box">
+        <div class="modal-title">🏥 醫療 / 保險</div>
+        <div class="form-group">
+            <label class="form-label">保障配置</label>
+            <select class="form-select" id="mm-type" onchange="onMedicalType()">
+                <option value="0.3">基礎版（3,000 元 / 月）</option>
+                <option value="0.8" selected>完整版（8,000 元 / 月）</option>
+                <option value="1.5">高端版（1.5 萬 / 月）</option>
+                <option value="custom">自訂金額</option>
+            </select>
+            <div class="hint-text">把醫療險、意外險、重大傷病、壽險等保費先折成每月現金流，比年繳更有感。</div>
+        </div>
+        <div class="form-group" id="mm-custom-wrap" style="display:none;">
+            <label class="form-label">自訂每月醫療 / 保險支出</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mm-custom" placeholder="請輸入" step="0.1" min="0">
+                <span class="unit">元 / 月</span>
+            </div>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-secondary" onclick="closeModal('medical')">取消</button>
+            <button class="btn-primary" onclick="saveModal('medical')">確認</button>
+        </div>
+    </div>
+</div>
+
+<!-- 旅遊 -->
+<div class="modal-overlay" id="m-emergency">
+    <div class="modal-box">
+        <div class="modal-title">✈️ 旅遊計畫</div>
+        <div class="form-group">
+            <label class="form-label">每年旅行預算</label>
+            <select class="form-select" id="me-type" onchange="onEmergencyType()">
+                <option value="">請選擇</option>
+                <option value="10">頂級奢華遊（每年10萬）</option>
+                <option value="5">精緻輕鬆遊（每年5萬）</option>
+                <option value="3">小資自由行（每年3萬）</option>
+                <option value="custom">自訂金額</option>
+                <option value="0">不旅遊</option>
+            </select>
+        </div>
+        <div class="form-group" id="me-custom-wrap" style="display:none;">
+            <label class="form-label">每年自訂金額</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="me-custom" placeholder="請輸入">
+                <span class="unit">萬元</span>
+            </div>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-secondary" onclick="closeModal('emergency')">取消</button>
+            <button class="btn-primary" onclick="saveModal('emergency')">確認</button>
+        </div>
+    </div>
+</div>
+
+<!-- 每月基本生活費 -->
+<div class="modal-overlay" id="m-living">
+    <div class="modal-box">
+        <div class="modal-title">💰 每月基本生活費</div>
+        <div class="form-group">
+            <label class="form-label">每月個人基本生活費</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="ml-monthly" placeholder="例：3" step="0.5" min="0">
+                <span class="unit">萬元</span>
+            </div>
+            <div class="hint-text">含個人餐費、交通、日常消費等</div>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-secondary" onclick="closeModal('living')">取消</button>
+            <button class="btn-primary" onclick="saveModal('living')">確認</button>
+        </div>
+    </div>
+</div>
+
+<!-- 其他 -->
+<div class="modal-overlay" id="m-other">
+    <div class="modal-box">
+        <div class="modal-title">🎁 其他項目</div>
+        <div class="form-group">
+            <label class="form-label">項目名稱</label>
+            <input type="text" class="form-input" id="mo-name" placeholder="例：出國留學、創業基金…">
+        </div>
+        <div class="form-group">
+            <label class="form-label">每月金額</label>
+            <div class="input-row">
+                <input type="number" class="form-input" id="mo-amount" placeholder="請輸入">
+                <span class="unit">萬元</span>
+            </div>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-secondary" onclick="closeModal('other')">取消</button>
+            <button class="btn-primary" onclick="saveModal('other')">確認</button>
+        </div>
+    </div>
+</div>
+
+<footer>© 現實人生計算機｜僅供試算參考，正確規劃請諮詢壽險顧問</footer>
+
+<script>
+// ===== STATE =====
+let u = { nickname:'', age:0, gender:'M', retire:60, income:0 };
+let exp = {};
+let baselineExp = null;
+let baselineSummary = null;
+let currentSummary = null;
+let currentStep = 0;
+
+// ===== NAVIGATION =====
+function goStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+    currentStep = n;
+    updateProgress();
+    window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateProgress() {
+    const pct = [0, 25, 50, 75, 100][currentStep] || 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = pct ? `步驟 ${currentStep}/3` : '';
+}
+
+// ===== GENDER =====
+function setGender(g) {
+    u.gender = g;
+    document.getElementById('gb-M').classList.toggle('active', g==='M');
+    document.getElementById('gb-F').classList.toggle('active', g==='F');
+}
+
+// ===== STEP 1 VALIDATION =====
+function step1Next() {
+    const nick = document.getElementById('f-nickname').value.trim();
+    const age  = parseInt(document.getElementById('f-age').value);
+    const ret  = parseInt(document.getElementById('f-retire').value);
+    const inc  = parseFloat(document.getElementById('f-income').value);
+
+    if (!nick)              return alert('請輸入暱稱');
+    if (!age||age<18||age>70) return alert('請輸入正確年齡（18-70歲）');
+    if (!ret||ret<=age)     return alert('退休年齡必須大於目前年齡');
+    if (!inc||inc<=0)       return alert('請輸入每月收入');
+
+    u.nickname = nick;
+    u.age = age;
+    u.retire = ret;
+    u.income = inc;
+
+    // Pre-fill modal read-only fields
+    const mrYears = document.getElementById('mr-years-display');
+    if (mrYears) mrYears.value = (85 - ret) + ' 年';
+
+    goStep(2);
+    updateLiveSummary();
+}
+
+// ===== MODAL HELPERS =====
+function openModal(cat) {
+    document.getElementById('m-' + cat).classList.add('open');
+    if (cat === 'retirement') onRetirementHousingChange();
+}
+function closeModal(cat) {
+    document.getElementById('m-' + cat).classList.remove('open');
+}
+
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('open');
+    });
+});
+
+// Type handlers
+const HOUSE_BUDGETS = {
+    buy: {
+        apartment_elevator: [
+            { value: 2500, label: '入門總價（2,500萬）' },
+            { value: 3500, label: '主流總價（3,500萬）' },
+            { value: 4500, label: '高階總價（4,500萬）' }
+        ],
+        townhouse_suburb: [
+            { value: 1800, label: '入門總價（1,800萬）' },
+            { value: 2400, label: '主流總價（2,400萬）' },
+            { value: 3000, label: '高階總價（3,000萬）' }
+        ],
+        apartment_walkup: [
+            { value: 800, label: '入門總價（800萬）' },
+            { value: 1100, label: '主流總價（1,100萬）' },
+            { value: 1500, label: '高階總價（1,500萬）' }
+        ],
+        studio_personal: [
+            { value: 600, label: '入門總價（600萬）' },
+            { value: 900, label: '主流總價（900萬）' },
+            { value: 1200, label: '高階總價（1,200萬）' }
+        ]
+    },
+    rent: {
+        apartment_elevator: [
+            { value: 2.5, label: '月租入門（2.5萬 / 月）' },
+            { value: 3.2, label: '月租主流（3.2萬 / 月）' },
+            { value: 4, label: '月租高階（4萬 / 月）' }
+        ],
+        townhouse_suburb: [
+            { value: 2, label: '月租入門（2萬 / 月）' },
+            { value: 2.5, label: '月租主流（2.5萬 / 月）' },
+            { value: 3, label: '月租高階（3萬 / 月）' }
+        ],
+        apartment_walkup: [
+            { value: 1.5, label: '月租入門（1.5萬 / 月）' },
+            { value: 2, label: '月租主流（2萬 / 月）' },
+            { value: 2.5, label: '月租高階（2.5萬 / 月）' }
+        ],
+        studio_personal: [
+            { value: 1, label: '月租入門（1萬 / 月）' },
+            { value: 1.4, label: '月租主流（1.4萬 / 月）' },
+            { value: 1.8, label: '月租高階（1.8萬 / 月）' }
+        ]
+    }
+};
+
+function calculateMonthlyPayment(principalWan, annualRate=0.02, years=30) {
+    const monthlyRate = annualRate / 12;
+    const months = years * 12;
+    if (monthlyRate === 0) return principalWan / months;
+    const factor = Math.pow(1 + monthlyRate, months);
+    return principalWan * (monthlyRate * factor) / (factor - 1);
+}
+
+function onHouseOptionChange() {
+    const ownership = document.getElementById('mh-ownership').value;
+    const type = document.getElementById('mh-type').value;
+    const budgetEl = document.getElementById('mh-budget');
+    const hintEl = document.getElementById('mh-budget-hint');
+    const customUnit = document.getElementById('mh-custom-unit');
+    const customHint = document.getElementById('mh-custom-hint');
+
+    toggle('mh-recommend-wrap', !!(ownership && type));
+    toggle('mh-custom-wrap', false);
+    document.getElementById('mh-custom').value = '';
+
+    customUnit.textContent = ownership === 'rent' ? '元 / 月' : '萬元';
+    customHint.textContent = ownership === 'rent'
+        ? '租屋請直接輸入每月租金。'
+        : '購屋請輸入房屋總價，系統會自動換算頭款 2 成、貸款 8 成、30 年房貸月付。';
+
+    if (!(ownership && type)) {
+        budgetEl.innerHTML = '<option value="">請先選擇擁有方式與住宅類型</option>';
+        hintEl.textContent = '系統會依照雙北常見行情幫你帶出推薦金額';
+        return;
+    }
+
+    const options = HOUSE_BUDGETS[ownership][type] || [];
+    budgetEl.innerHTML = '<option value="">請選擇建議金額</option>'
+        + options.map(item => `<option value="${item.value}">${item.label}</option>`).join('')
+        + '<option value="custom">自訂金額</option>';
+
+    hintEl.textContent = ownership === 'buy'
+        ? '購屋固定頭款 2 成、貸款 8 成，並以 30 年房貸、年利率 2% 換算月付。'
+        : '租屋直接以每月租金計入現金流。';
+}
+
+function onHouseBudgetChange() {
+    const val = document.getElementById('mh-budget').value;
+    toggle('mh-custom-wrap', val === 'custom');
+}
+
+function onCarType()      { toggle('mc-custom-wrap', document.getElementById('mc-type').value==='custom'); }
+function onFuelChange()    { toggle('mc-fuel-custom-wrap', document.getElementById('mc-fuel').value==='custom'); }
+function onParkingChange() { toggle('mc-parking-custom-wrap', document.getElementById('mc-parking').value==='custom'); }
+function onWeddingSelectChange(selectId, wrapId) { toggle(wrapId, document.getElementById(selectId).value==='custom'); }
+function onChildrenType() { toggle('mk-custom-wrap', document.getElementById('mk-type').value==='custom'); }
+function onMedicalType()  { toggle('mm-custom-wrap', document.getElementById('mm-type').value==='custom'); }
+function onEmergencyType(){ toggle('me-custom-wrap', document.getElementById('me-type').value==='custom'); }
+function onRetirementSelectChange(selectId, wrapId) { toggle(wrapId, document.getElementById(selectId).value==='custom'); }
+function onRetirementHousingChange() {
+    const mode = document.getElementById('mr-housing-mode').value;
+    toggle('mr-housing-custom-wrap', mode === 'custom');
+    const hint = document.getElementById('mr-housing-link-hint');
+    if (mode === 'link') {
+        if (exp.house && exp.house.amount > 0) {
+            hint.textContent = '目前房貸 / 房租已帶入：' + exp.house.amount.toFixed(2) + ' 萬 / 月';
+        } else {
+            hint.textContent = '前面尚未填房子，若保留此選項會視為 0。';
+        }
+    } else if (mode === 'stop') {
+        hint.textContent = '退休後視為房貸已繳完或不用再租屋。';
+    } else {
+        hint.textContent = '可自訂退休後仍需負擔的房貸或租金。';
+    }
+}
+function toggle(id, show) { document.getElementById(id).style.display = show?'block':'none'; }
+
+// ===== SAVE MODAL =====
+function saveModal(cat) {
+    let amount = 0, label = '', choice = '';
+
+    switch(cat) {
+        case 'house': {
+            const ownership = document.getElementById('mh-ownership').value;
+            const type = document.getElementById('mh-type').value;
+            const budget = document.getElementById('mh-budget').value;
+            if (!ownership) return alert('請選擇擁有方式');
+            if (!type) return alert('請選擇住宅類型');
+            if (!budget) return alert('請選擇建議預算');
+
+            let baseAmount;
+            if (budget === 'custom') {
+                baseAmount = +document.getElementById('mh-custom').value;
+                if (!baseAmount) return alert('請輸入金額');
+            } else {
+                baseAmount = +budget;
+            }
+
+            choice = `🏠 房子｜${selText('mh-type')}`;
+            if (ownership === 'buy') {
+                const loanPrincipal = baseAmount * 0.8;
+                const monthlyPayment = calculateMonthlyPayment(loanPrincipal, 0.02, 30);
+                amount = monthlyPayment;
+                label = `總價${baseAmount}萬｜頭款${(baseAmount*0.2).toFixed(0)}萬｜30年房貸月付約${monthlyPayment.toFixed(2)}萬`;
+            } else {
+                amount = baseAmount;
+                label = `月租約${baseAmount.toFixed(2)}萬`;
+            }
+            break;
+        }
+        case 'car': {
+            const t = document.getElementById('mc-type').value;
+            if (!t) return alert('請選擇車子類型');
+            const fuelRaw = document.getElementById('mc-fuel').value;
+            const parkingRaw = document.getElementById('mc-parking').value;
+            const fuel = fuelRaw === 'custom' ? inputYuanToWan(document.getElementById('mc-fuel-custom').value) : (+fuelRaw || 0);
+            const parking = parkingRaw === 'custom' ? inputYuanToWan(document.getElementById('mc-parking-custom').value) : (+parkingRaw || 0);
+            let loan = 0;
+            let price = 0;
+            let typeText = '';
+            if (t === 'custom') {
+                price = +document.getElementById('mc-custom').value;
+                if (!price) return alert('請輸入車價');
+                typeText = '自訂車款';
+            } else {
+                price = +t;
+                typeText = selText('mc-type').replace(/（.*?）/g, '').trim();
+            }
+            if (price > 0) {
+                loan = calculateMonthlyPayment(price * 0.8, 0.03, 7);
+            }
+            amount = loan + fuel + parking;
+            choice = `🚗 車子｜${price > 0 ? typeText + (parking > 0 ? '+車位' : '') : '目前不買車'}`;
+            label = price > 0
+                ? `車價${price}萬｜7年車貸約${loan.toFixed(2)}萬 + 油電${fuel.toFixed(2)}萬 + 車位${parking.toFixed(2)}萬`
+                : `油電${fuel.toFixed(2)}萬 + 車位${parking.toFixed(2)}萬`;
+            break;
+        }
+        case 'wedding': {
+            const utilityRaw = document.getElementById('mw-utility').value;
+            const networkRaw = document.getElementById('mw-network').value;
+            const homeRaw = document.getElementById('mw-home').value;
+            const foodRaw = document.getElementById('mw-food').value;
+            const utility = utilityRaw === 'custom' ? inputYuanToWan(document.getElementById('mw-utility-custom').value) : (+utilityRaw || 0);
+            const network = networkRaw === 'custom' ? inputYuanToWan(document.getElementById('mw-network-custom').value) : (+networkRaw || 0);
+            const home = homeRaw === 'custom' ? inputYuanToWan(document.getElementById('mw-home-custom').value) : (+homeRaw || 0);
+            const food = foodRaw === 'custom' ? inputYuanToWan(document.getElementById('mw-food-custom').value) : (+foodRaw || 0);
+            amount = utility + network + home + food;
+            if (amount <= 0) return alert('請至少設定一項家庭開銷');
+            choice = '🏡 家庭開銷｜日常家用';
+            label = `水電瓦斯${utility.toFixed(2)}萬 + 網路第四台${network.toFixed(2)}萬 + 家庭用品${home.toFixed(2)}萬 + 伙食外食${food.toFixed(2)}萬`;
+            exp[cat] = { amount, label, data: { utilityRaw, utilityCustom: utilityRaw === 'custom' ? utility : '', networkRaw, networkCustom: networkRaw === 'custom' ? network : '', homeRaw, homeCustom: homeRaw === 'custom' ? home : '', foodRaw, foodCustom: foodRaw === 'custom' ? food : '' } };
+            markFilled(cat, amount);
+            closeModal(cat);
+            updateLiveSummary();
+            if (currentStep === 3) calcResults(false);
+            return;
+        }
+        case 'children': {
+            const cnt = +document.getElementById('mk-count').value || 0;
+            const t = document.getElementById('mk-type').value;
+            let unit;
+            if (t === 'custom') {
+                unit = inputYuanToWan(document.getElementById('mk-custom').value);
+                if (!unit && cnt > 0) return alert('請輸入金額');
+                choice = '👶 小孩｜自訂養育版本';
+            } else {
+                unit = +t;
+                choice = `👶 小孩｜${selText('mk-type').replace(/（.*?）/g, '').trim()}`;
+            }
+            amount = cnt * unit;
+            label = `${cnt}位孩子 × 每月${unit.toFixed(2)}萬`;
+            break;
+        }
+        case 'parents': {
+            const mo = +document.getElementById('mp-monthly').value;
+            const care = +document.getElementById('mp-care').value || 0;
+            if (!mo && !care) return alert('請至少輸入孝親費或照護支出');
+            amount = mo + care;
+            choice = '👴 孝養父母｜孝親費＋照護';
+            label = `孝親費${mo.toFixed(2)}萬 + 照護${care.toFixed(2)}萬`;
+            exp[cat] = { amount, label, data: { monthly: mo, care } };
+            markFilled(cat, amount);
+            closeModal(cat);
+            updateLiveSummary();
+            if (currentStep === 3) calcResults(false);
+            return;
+        }
+        case 'retirement': {
+            const life = +document.getElementById('mr-monthly').value;
+            if (!life || life <= 0) return alert('請輸入退休後每月生活費');
+            const housingMode = document.getElementById('mr-housing-mode').value;
+            let housing = 0;
+            if (housingMode === 'link') housing = exp.house ? (exp.house.amount || 0) : 0;
+            else if (housingMode === 'custom') housing = inputYuanToWan(document.getElementById('mr-housing-custom').value);
+            const funRaw = document.getElementById('mr-fun').value;
+            const travelRaw = document.getElementById('mr-travel').value;
+            const careRaw = document.getElementById('mr-care').value;
+            const fun = funRaw === 'custom' ? inputYuanToWan(document.getElementById('mr-fun-custom').value) : (+funRaw || 0);
+            const travel = travelRaw === 'custom' ? inputYuanToWan(document.getElementById('mr-travel-custom').value) : (+travelRaw || 0);
+            const care = careRaw === 'custom' ? inputYuanToWan(document.getElementById('mr-care-custom').value) : (+careRaw || 0);
+            const retirementMonthlyNeed = life + housing + fun + travel + care;
+            const retirementYears = Math.max(85 - u.retire, 0);
+            const yearsToRetire = Math.max(u.retire - u.age, 1);
+            const targetTotal = retirementMonthlyNeed * 12 * retirementYears;
+            const monthlySavingNeed = targetTotal / (yearsToRetire * 12);
+            amount = monthlySavingNeed;
+            choice = '🏖️ 退休準備｜退休生活';
+            label = `退休後每月${retirementMonthlyNeed.toFixed(2)}萬｜退休 ${retirementYears} 年需 ${targetTotal.toFixed(0)} 萬｜要在退休前 ${yearsToRetire} 年每月先存 ${monthlySavingNeed.toFixed(2)} 萬`;
+            break;
+        }
+        case 'medical': {
+            const t = document.getElementById('mm-type').value;
+            let monthly;
+            if (t === 'custom') {
+                monthly = inputYuanToWan(document.getElementById('mm-custom').value);
+                if (!monthly) return alert('請輸入金額');
+                choice = '🏥 醫療 / 保險｜自訂配置';
+            } else {
+                monthly = +t;
+                choice = `🏥 醫療 / 保險｜${selText('mm-type').replace(/（.*?）/g, '').trim()}`;
+            }
+            amount = monthly;
+            label = `醫療 / 保險每月${monthly.toFixed(2)}萬`;
+            exp[cat] = { amount, label, data: { type: t, custom: t === 'custom' ? monthly : '' } };
+            markFilled(cat, amount);
+            closeModal(cat);
+            updateLiveSummary();
+            if (currentStep === 3) calcResults(false);
+            return;
+        }
+        case 'emergency': {
+            const t = document.getElementById('me-type').value;
+            if (!t) return alert('請選擇旅遊預算');
+            if (t === '0') { amount = 0; choice = '✈️ 旅行｜目前不安排'; label = '不旅遊'; break; }
+            let yearly;
+            let typeText = '';
+            if (t === 'custom') {
+                yearly = +document.getElementById('me-custom').value;
+                if (!yearly) return alert('請輸入金額');
+                typeText = '自訂旅遊';
+            } else {
+                yearly = +t;
+                typeText = selText('me-type').replace(/（.*?）/g, '').trim();
+            }
+            const yearsToRetire = Math.max(u.retire - u.age, 0);
+            amount = yearly / 12;
+            choice = `✈️ 旅行｜${typeText}`;
+            label = `平均每月${amount.toFixed(2)}萬｜到退休前 ${yearsToRetire} 年共 ${(yearly * yearsToRetire).toFixed(0)} 萬`;
+            break;
+        }
+        case 'living': {
+            const mo = +document.getElementById('ml-monthly').value;
+            if (!mo || mo <= 0) return alert('請輸入每月生活費');
+            const yearsToRetire = Math.max(u.retire - u.age, 0);
+            amount = mo;
+            choice = '💰 每月生活費｜個人日常開銷';
+            label = `每月${mo.toFixed(2)}萬｜到退休前 ${yearsToRetire} 年共 ${(mo * 12 * yearsToRetire).toFixed(0)} 萬`;
+            break;
+        }
+        case 'other': {
+            const name = document.getElementById('mo-name').value.trim();
+            amount = +document.getElementById('mo-amount').value;
+            if (!amount) return alert('請輸入金額');
+            choice = `🎁 其他｜${name || '其他項目'}`;
+            label = `每月${amount.toFixed(2)}萬`;
+            break;
+        }
+    }
+
+    exp[cat] = { amount, label, choice };
+    if (cat === 'retirement') {
+        const life = +document.getElementById('mr-monthly').value || 0;
+        const housingMode = document.getElementById('mr-housing-mode').value;
+        let housing = 0;
+        if (housingMode === 'link') housing = exp.house ? (exp.house.amount || 0) : 0;
+        else if (housingMode === 'custom') housing = inputYuanToWan(document.getElementById('mr-housing-custom').value);
+        const funRaw = document.getElementById('mr-fun').value;
+        const travelRaw = document.getElementById('mr-travel').value;
+        const careRaw = document.getElementById('mr-care').value;
+        const fun = funRaw === 'custom' ? inputYuanToWan(document.getElementById('mr-fun-custom').value) : (+funRaw || 0);
+        const travel = travelRaw === 'custom' ? inputYuanToWan(document.getElementById('mr-travel-custom').value) : (+travelRaw || 0);
+        const care = careRaw === 'custom' ? inputYuanToWan(document.getElementById('mr-care-custom').value) : (+careRaw || 0);
+        const retirementMonthlyNeed = life + housing + fun + travel + care;
+        const retirementYears = Math.max(85 - u.retire, 0);
+        exp[cat].targetMonthly = retirementMonthlyNeed;
+        exp[cat].targetTotal = retirementMonthlyNeed * 12 * retirementYears;
+    }
+    markFilled(cat, amount);
+    closeModal(cat);
+    updateLiveSummary();
+    if (currentStep === 3) calcResults(false);
+}
+
+function selText(id) {
+    const el = document.getElementById(id);
+    return el.options[el.selectedIndex].text;
+}
+
+function markFilled(cat, amount) {
+    const ci = document.getElementById('ci-' + cat);
+    const ca = document.getElementById('ca-' + cat);
+    ci.classList.add('filled');
+    ca.textContent = amount > 0 ? fmtAmt(amount) + '/月' : '已跳過';
+    if (!ci.querySelector('.check-badge')) {
+        const b = document.createElement('div');
+        b.className = 'check-badge'; b.textContent = '✓';
+        ci.appendChild(b);
+    }
+}
+
+
+function wanToYuan(n) {
+    return Math.round((Number(n) || 0) * 10000);
+}
+
+function inputYuanToWan(v) {
+    return (Number(v) || 0) / 10000;
+}
+
+function formatWanDetailToYuanText(n) {
+    return wanToYuan(n).toLocaleString() + ' 元';
+}
+
+function formatYuanFromWan(n) {
+    return wanToYuan(n).toLocaleString() + ' 元';
+}
+
+function formatYuanPerMonthFromWan(n) {
+    return wanToYuan(n).toLocaleString() + ' 元 / 月';
+}
+
+function fmtAmt(n) {
+    return formatYuanFromWan(n);
+}
+
+
+function getCurrentNeed() {
+    let total = 0;
+    Object.values(exp).forEach(v => {
+        if (v && v.amount > 0) total += v.amount;
+    });
+    return total;
+}
+
+function updateLiveSummary() {
+    const incomeEl = document.getElementById('liveIncome');
+    const needEl = document.getElementById('liveNeed');
+    const gapTextEl = document.getElementById('liveGapText');
+    if (!incomeEl || !needEl || !gapTextEl) return;
+    const income = u.income || 0;
+    const filled = Object.values(exp).filter(v => v && ((v.amount || 0) > 0 || (v.label || '').includes('不旅遊') || (v.label || '').includes('已跳過'))).length;
+    incomeEl.textContent = formatYuanFromWan(income);
+    needEl.textContent = `${filled} / 10`;
+    gapTextEl.textContent = filled ? '很好，先把理想生活想清楚，差距最後一起揭曉' : '先選幾項看看，最後一次揭牌';
+}
+
+// ===== CALCULATE RESULTS =====
+
+function calcResults(goToResult = true) {
+    if (!Object.keys(exp).length) return alert('請至少填寫一個人生項目！');
+    if (goToResult && !baselineExp) baselineExp = cloneExp(exp);
+
+    const currentIncome = u.income;
+    const yearsToRetire = Math.max(u.retire - u.age, 0);
+    const colors = ['#3c84e6','#f39838','#73bf45','#8f78d8','#f06b79','#f5b321','#39c1b7','#5b6ee1','#9c7bff','#98a4c0'];
+
+    const catNames = {
+        house:'🏠 房子', car:'🚗 車子', wedding:'🏡 家庭開銷',
+        children:'👶 小孩', parents:'👴 孝養父母',
+        retirement:'🏖️ 退休準備', medical:'🏥 醫療 / 保險', emergency:'✈️ 旅行',
+        living:'💰 每月生活費', other:'🎁 其他'
+    };
+
+    let totalExp = 0;
+    let retirementTargetTotal = 0;
+    let retirementMonthlyNeed = 0;
+    const items = [];
+    const shareItems = [];
+
+    Object.entries(exp).forEach(([k,v]) => {
+        if (v && v.amount > 0) {
+            totalExp += v.amount;
+            if (k === 'retirement') {
+                retirementTargetTotal = v.targetTotal || 0;
+                retirementMonthlyNeed = v.targetMonthly || 0;
+            }
+            const item = {
+                key: k,
+                name: catNames[k],
+                choice: v.choice || catNames[k],
+                label: v.label,
+                amount: v.amount
+            };
+            items.push(item);
+            shareItems.push({
+                ...item,
+                pctIncome: 0
+            });
+        }
+    });
+
+    shareItems.sort((a,b) => b.amount - a.amount);
+    items.sort((a,b) => b.amount - a.amount);
+    shareItems.forEach(it => {
+        it.pctIncome = totalExp > 0 ? (it.amount / totalExp * 100) : 0;
+    });
+
+    const gap = totalExp - currentIncome;
+    const gapYear = gap * 12;
+    const maxBar = Math.max(currentIncome, totalExp, 0.1);
+
+    document.getElementById('r-greeting').textContent = `${u.nickname}，這就是你理想生活的現實版本`;
+    document.getElementById('r-total').textContent = wanToYuan(totalExp).toLocaleString();
+    document.getElementById('r-income').textContent = formatYuanPerMonthFromWan(currentIncome);
+    document.getElementById('r-expense').textContent = formatYuanPerMonthFromWan(totalExp);
+
+    const noteEl = document.getElementById('r-note');
+    if (noteEl) {
+        const retirementLine = retirementTargetTotal > 0
+            ? `你設定的退休生活，代表退休後每月要 <strong>${formatYuanPerMonthFromWan(retirementMonthlyNeed)}</strong>，而且要在退休前 <strong>${yearsToRetire} 年</strong> 先存到 <strong>${formatYuanFromWan(retirementTargetTotal)}</strong>。`
+            : '你剛剛填的每一項，不是想像，而是未來真實會發生的現金流。';
+        noteEl.innerHTML = `你剛剛不是在填表，你是在替未來的自己選生活。<br>${retirementLine}`;
+    }
+
+    const gEl = document.getElementById('r-gap');
+    const gapCardEl = document.getElementById('r-gap-card');
+    const gapYearEl = document.getElementById('r-gap-year');
+    const retTotalEl = document.getElementById('r-ret-total');
+    const retSubEl = document.getElementById('r-ret-sub');
+
+    if (gap > 0) {
+        gEl.textContent = `每月還差 ${formatYuanPerMonthFromWan(gap)}`;
+        gEl.className = 'compare-val clr-bad';
+        gapCardEl.textContent = formatYuanFromWan(gap);
+        gapYearEl.textContent = formatYuanFromWan(gapYear);
+    } else {
+        gEl.textContent = `每月多出 ${formatYuanPerMonthFromWan(Math.abs(gap))}`;
+        gEl.className = 'compare-val clr-good';
+        gapCardEl.textContent = formatYuanFromWan(Math.abs(gap));
+        gapYearEl.textContent = formatYuanFromWan(Math.abs(gapYear));
+    }
+
+    if (retirementTargetTotal > 0) {
+        retTotalEl.textContent = formatYuanFromWan(retirementTargetTotal);
+        retSubEl.textContent = yearsToRetire > 0 ? `${yearsToRetire} 年內要存完` : '已到退休年齡';
+    } else {
+        retTotalEl.textContent = '未設定';
+        retSubEl.textContent = '退休目標';
+    }
+
+    document.getElementById('r-income-pct').textContent = formatYuanPerMonthFromWan(currentIncome);
+    document.getElementById('r-expense-pct').textContent = formatYuanPerMonthFromWan(totalExp);
+    setTimeout(() => {
+        document.getElementById('bar-i').style.width = (currentIncome/maxBar*100) + '%';
+        document.getElementById('bar-e').style.width = (totalExp/maxBar*100) + '%';
+    }, 400);
+
+    // pie chart integrated in results page
+    const shareWrap = document.getElementById('r-share');
+    const chartCanvas = document.getElementById('shareChart');
+    document.getElementById('r-share-total').innerHTML = `${wanToYuan(totalExp).toLocaleString()} <span>元</span>`;
+
+    const totalShare = shareItems.reduce((sum, item) => sum + item.amount, 0);
+    shareItems.forEach((it, idx) => {
+        it.color = colors[idx % colors.length];
+        it.pctShare = totalShare > 0 ? (it.amount / totalShare * 100) : 0;
+    });
+
+    if (window.sharePieChart) {
+        window.sharePieChart.destroy();
+    }
+
+    window.sharePieChart = new Chart(chartCanvas.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: shareItems.map(it => it.name),
+            datasets: [{
+                data: shareItems.map(it => it.amount),
+                backgroundColor: shareItems.map(it => it.color),
+                borderColor: '#ffffff',
+                borderWidth: 2,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '72%',
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const item = shareItems[context.dataIndex];
+                            return `${item.name}：${formatYuanPerMonthFromWan(item.amount)}｜占每月收入 ${item.pctIncome.toFixed(0)}%`;
+                        }
+                    }
+                },
+                datalabels: {
+                    color: '#ffffff',
+                    font: { weight: '700', size: 12 },
+                    formatter: function(value, ctx) {
+                        const item = shareItems[ctx.dataIndex];
+                        return item.pctShare >= 4 ? `${item.pctShare.toFixed(1)}%` : '';
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+
+    shareWrap.innerHTML = shareItems.map(it => {
+        const pctText = currentIncome > 0 ? `${it.pctIncome.toFixed(0)}%` : '—';
+        return `
+            <div class="share-row">
+                <div class="share-name">
+                    <span class="share-dot" style="background:${it.color}"></span>
+                    <span class="share-text">${it.name}</span>
+                </div>
+                <div class="share-money">${wanToYuan(it.amount).toLocaleString()} 元</div>
+                <div class="share-pct">占每月收入 ${pctText}</div>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('r-breakdown').innerHTML = items.map(it => `
+        <div class="breakdown-item">
+            <div>
+                <div class="breakdown-name">${it.choice}<button class="edit-inline-btn" onclick="editItem('${it.key}')">修正</button></div>
+                <div class="breakdown-sub">${it.label}</div>
+            </div>
+            <div class="breakdown-amt">${wanToYuan(it.amount).toLocaleString()} 元 / 月</div>
+        </div>`).join('');
+
+    const quiet = document.getElementById('r-quiet');
+    if (gap > 0) {
+        quiet.innerHTML = `
+            <div class="quiet-box-title">現實很殘酷，但也代表你還有機會改變。</div>
+            <div class="quiet-box-text">
+                你現在每月收入是 <strong>${formatYuanPerMonthFromWan(currentIncome)}</strong>，但你親手選出來的生活，需要 <strong>${formatYuanPerMonthFromWan(totalExp)}</strong>。<br>
+                這中間差的不是感覺，而是每月 <strong>${formatYuanFromWan(gap)}</strong>、每年 <strong>${formatYuanFromWan(gapYear)}</strong>。${retirementTargetTotal > 0 ? `退休前還要先把 <strong>${formatYuanFromWan(retirementTargetTotal)}</strong> 存好。` : ''}
+            </div>
+        `;
+    } else {
+        quiet.innerHTML = `
+            <div class="quiet-box-title">至少，這份理想生活目前有機會接得住。</div>
+            <div class="quiet-box-text">
+                你現在每月還有 <strong>${formatYuanFromWan(Math.abs(gap))}</strong> 的空間。${retirementTargetTotal > 0 ? `但退休前依然要把 <strong>${formatYuanFromWan(retirementTargetTotal)}</strong> 先準備好。` : '接下來可以把收入來源、資產與存款也放進來，確認這份從容是不是真的站得住。'}
+            </div>
+        `;
+    }
+
+    const cta = document.getElementById('r-cta');
+    if (gap > 0) {
+        cta.className = 'cta-box danger';
+        cta.innerHTML = `
+            <div class="cta-box-title">下一步，不是重算，是找出怎麼補。</div>
+            <div class="cta-box-text">
+                把正職收入、斜槓收入、投資收入、現有存款一起放進來，才會知道這個差距要靠什麼補、補多少、多久補完。
+            </div>
+            <button class="cta-btn" onclick="alert('下一步，就是把收入來源與現有資產一起放進來。')">我想知道怎麼補這個差距 →</button>
+        `;
+    } else {
+        cta.className = 'cta-box safe';
+        cta.innerHTML = `
+            <div class="cta-box-title">至少，這份生活目前還接得住。</div>
+            <div class="cta-box-text">
+                接下來真正要看的，是你靠什麼收入撐住它，以及退休前那筆錢要怎麼更穩地準備。
+            </div>
+            <button class="cta-btn" onclick="alert('下一步，可以把收入來源與資產放進來，確認這份從容能不能成立。')">繼續看收入與資產 →</button>
+        `;
+    }
+
+    if (goToResult) goStep(3);
+}
+
+
+function editItem(cat) {
+    populateModal(cat);
+    openModal(cat);
+}
+
+function populateModal(cat) {
+    const saved = exp[cat];
+    if (!saved || !saved.data) return;
+    const d = saved.data;
+
+    if (cat === 'house') {
+        document.getElementById('mh-ownership').value = d.ownership || '';
+        document.getElementById('mh-type').value = d.type || '';
+        onHouseOptionChange();
+        document.getElementById('mh-budget').value = d.budget || '';
+        onHouseBudgetChange();
+        document.getElementById('mh-custom').value = d.custom || '';
+    } else if (cat === 'car') {
+        document.getElementById('mc-type').value = d.type || '';
+        onCarType();
+        document.getElementById('mc-custom').value = d.custom || '';
+        document.getElementById('mc-fuel').value = d.fuelRaw || '0.3';
+        onFuelChange();
+        document.getElementById('mc-fuel-custom').value = d.fuelCustom || '';
+        document.getElementById('mc-parking').value = d.parkingRaw || '0.5';
+        onParkingChange();
+        document.getElementById('mc-parking-custom').value = d.parkingCustom || '';
+    } else if (cat === 'wedding') {
+        document.getElementById('mw-utility').value = d.utilityRaw || '0.3';
+        onWeddingSelectChange('mw-utility','mw-utility-custom-wrap');
+        document.getElementById('mw-utility-custom').value = d.utilityCustom || '';
+        document.getElementById('mw-network').value = d.networkRaw || '0.15';
+        onWeddingSelectChange('mw-network','mw-network-custom-wrap');
+        document.getElementById('mw-network-custom').value = d.networkCustom || '';
+        document.getElementById('mw-home').value = d.homeRaw || '0.5';
+        onWeddingSelectChange('mw-home','mw-home-custom-wrap');
+        document.getElementById('mw-home-custom').value = d.homeCustom || '';
+        document.getElementById('mw-food').value = d.foodRaw || '1.2';
+        onWeddingSelectChange('mw-food','mw-food-custom-wrap');
+        document.getElementById('mw-food-custom').value = d.foodCustom || '';
+    } else if (cat === 'children') {
+        document.getElementById('mk-count').value = d.cnt || 0;
+        document.getElementById('mk-type').value = d.type || '3';
+        onChildrenType();
+        document.getElementById('mk-custom').value = d.custom || '';
+    } else if (cat === 'parents') {
+        document.getElementById('mp-monthly').value = d.monthly || '';
+        document.getElementById('mp-care').value = String(d.care ?? 0);
+    } else if (cat === 'retirement') {
+        document.getElementById('mr-monthly').value = d.life || '';
+        document.getElementById('mr-housing-mode').value = d.housingMode || 'link';
+        onRetirementHousingChange();
+        document.getElementById('mr-housing-custom').value = d.housingCustom || '';
+        document.getElementById('mr-fun').value = d.funRaw || '1';
+        onRetirementSelectChange('mr-fun','mr-fun-custom-wrap');
+        document.getElementById('mr-fun-custom').value = d.funCustom || '';
+        document.getElementById('mr-travel').value = d.travelRaw || '0.5';
+        onRetirementSelectChange('mr-travel','mr-travel-custom-wrap');
+        document.getElementById('mr-travel-custom').value = d.travelCustom || '';
+        document.getElementById('mr-care').value = d.careRaw || '0.8';
+        onRetirementSelectChange('mr-care','mr-care-custom-wrap');
+        document.getElementById('mr-care-custom').value = d.careCustom || '';
+    } else if (cat === 'medical') {
+        document.getElementById('mm-type').value = d.type || '0.8';
+        onMedicalType();
+        document.getElementById('mm-custom').value = d.custom || '';
+    } else if (cat === 'emergency') {
+        document.getElementById('me-type').value = d.type || '';
+        onEmergencyType();
+        document.getElementById('me-custom').value = d.custom || '';
+    } else if (cat === 'living') {
+        document.getElementById('ml-monthly').value = d.monthly || '';
+    } else if (cat === 'other') {
+        document.getElementById('mo-name').value = d.name || '';
+        document.getElementById('mo-amount').value = d.amount || '';
+    }
+}
+
+
+
+function cloneExp(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
+function summarizeExp(sourceExp) {
+    const catNames = {
+        house:'🏠 房子', car:'🚗 車子', wedding:'🏡 家庭開銷',
+        children:'👶 小孩', parents:'👴 孝養父母',
+        retirement:'🏖️ 退休準備', medical:'🏥 醫療 / 保險', emergency:'✈️ 旅行',
+        living:'💰 每月生活費', other:'🎁 其他'
+    };
+    const order = ['house','car','wedding','children','retirement','emergency','parents','medical','living','other'];
+    let total = 0;
+    const items = [];
+    order.forEach(k => {
+        const v = sourceExp[k];
+        if (v && v.amount > 0) {
+            total += v.amount;
+            items.push({
+                key: k,
+                name: catNames[k],
+                choice: v.choice || catNames[k],
+                label: v.label,
+                amount: v.amount
+            });
+        }
+    });
+    return { total, items };
+}
+
+
+function goCompareStep() {
+    if (!baselineExp) baselineExp = cloneExp(exp);
+    baselineSummary = summarizeExp(baselineExp);
+    currentSummary = summarizeExp(exp);
+
+    const currentIncomeYuan = wanToYuan(u.income || 0);
+    const idealTotalYuan = wanToYuan(baselineSummary.total || 0);
+    const adjustTotalYuan = wanToYuan(currentSummary.total || 0);
+    const deltaYuan = Math.max(0, idealTotalYuan - adjustTotalYuan);
+    const idealGapYuan = Math.max(0, idealTotalYuan - currentIncomeYuan);
+    const adjustGapYuan = Math.max(0, adjustTotalYuan - currentIncomeYuan);
+
+    document.getElementById('cmp-ideal-total').textContent = idealTotalYuan.toLocaleString() + ' 元 / 月';
+    document.getElementById('cmp-adjust-total').textContent = adjustTotalYuan.toLocaleString() + ' 元 / 月';
+    document.getElementById('cmp-delta').textContent = deltaYuan.toLocaleString() + ' 元';
+    document.getElementById('cmp-gap-ideal').textContent = idealGapYuan.toLocaleString() + ' 元';
+    document.getElementById('cmp-gap-adjust').textContent = adjustGapYuan.toLocaleString() + ' 元';
+    document.getElementById('cmp-ideal-gap').textContent = '距離現在收入差距 ' + idealGapYuan.toLocaleString() + ' 元';
+    document.getElementById('cmp-adjust-gap').textContent = '距離現在收入差距 ' + adjustGapYuan.toLocaleString() + ' 元';
+
+    const mapA = Object.fromEntries(baselineSummary.items.map(i => [i.key, i]));
+    const mapB = Object.fromEntries(currentSummary.items.map(i => [i.key, i]));
+    const order = ['house','car','wedding','children','retirement','emergency','parents','medical','living','other'];
+    const changed = order.filter(k => mapA[k] && mapB[k] && (mapA[k].label !== mapB[k].label || mapA[k].amount !== mapB[k].amount));
+
+    const list = document.getElementById('cmp-list');
+    if (!changed.length) {
+        list.innerHTML = `<div class="compare-line">
+            <div class="compare-item-name">目前尚未調整</div>
+            <div class="compare-card before">
+                <div class="compare-money">${idealTotalYuan.toLocaleString()} 元 / 月</div>
+                <div class="compare-detail">第一次跑出的理想版本，還沒被你往下修。</div>
+            </div>
+            <div class="compare-card after">
+                <div class="compare-money">${adjustTotalYuan.toLocaleString()} 元 / 月</div>
+                <div class="compare-detail">你可以回上一頁，逐項修正房子、車子、退休、旅遊等條件。</div>
+            </div>
+        </div>`;
+    } else {
+        list.innerHTML = changed.map(k => {
+            const a = mapA[k], b = mapB[k];
+            return `<div class="compare-line">
+                <div class="compare-item-name">${a.name}</div>
+                <div class="compare-card before">
+                    <div class="compare-money">${wanToYuan(a.amount).toLocaleString()} 元 / 月</div>
+                    <div class="compare-detail">${a.label}</div>
+                </div>
+                <div class="compare-card after">
+                    <div class="compare-money">${wanToYuan(b.amount).toLocaleString()} 元 / 月</div>
+                    <div class="compare-detail">${b.label}</div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    goStep(4);
+}
+
+
+
+// ===== RESTART =====
+function restart() {
+    exp = {};
+    baselineExp = null;
+    baselineSummary = null;
+    currentSummary = null;
+    document.querySelectorAll('.cat-item').forEach(el => {
+        el.classList.remove('filled');
+        const b = el.querySelector('.check-badge');
+        if (b) b.remove();
+    });
+    document.querySelectorAll('.cat-amt').forEach(el => el.textContent = '');
+    document.getElementById('bar-i').style.width = '0%';
+    document.getElementById('bar-e').style.width = '0%';
+
+    const houseOwnership = document.getElementById('mh-ownership');
+    const houseType = document.getElementById('mh-type');
+    const houseBudget = document.getElementById('mh-budget');
+    const houseCustom = document.getElementById('mh-custom');
+    if (houseOwnership) houseOwnership.value = '';
+    if (houseType) houseType.value = '';
+    if (houseBudget) houseBudget.innerHTML = '<option value="">請先選擇擁有方式與住宅類型</option>';
+    if (houseCustom) houseCustom.value = '';
+    toggle('mh-recommend-wrap', false);
+    toggle('mh-custom-wrap', false);
+
+    goStep(0);
+    updateLiveSummary();
+}
+
+// Init
+updateProgress();
+updateLiveSummary();
+</script>
+</body>
+</html>
